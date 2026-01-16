@@ -1,0 +1,18 @@
+# ASP.NET
+bin/
+obj/
+.vs/
+
+# Flutter
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Env
+.env
+appsettings.Development.json
+
+# OS
+.DS_Store
+Thumbs.db
