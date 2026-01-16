@@ -12,63 +12,119 @@ class MenuDetailScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 250,
+            expandedHeight: 300,
             pinned: true,
             backgroundColor: Colors.blue.shade600,
             foregroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                item.name,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black45,
-                      blurRadius: 4,
-                    ),
-                  ],
+              title: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
-              background: item.imageUrl.isNotEmpty
-                  ? Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(
-                          item.imageUrl,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Colors.grey.shade300,
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 64,
-                                color: Colors.grey.shade500,
+              background: Hero(
+                tag: 'menu-${item.id}',
+                child: item.imageUrl.isNotEmpty
+                    ? Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            item.imageUrl,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                color: Colors.grey.shade300,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: Colors.grey.shade300,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.broken_image_outlined,
+                                      size: 80,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                    SizedBox(height: 16),
+                                    Text(
+                                      'Không thể tải hình ảnh',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.7),
-                              ],
                             ),
                           ),
+                        ],
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.blue.shade400,
+                              Colors.blue.shade700,
+                            ],
+                          ),
                         ),
-                      ],
-                    )
-                  : Container(
-                      color: Colors.grey.shade300,
-                      child: Icon(
-                        Icons.restaurant,
-                        size: 64,
-                        color: Colors.grey.shade500,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.restaurant_menu,
+                              size: 100,
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Chưa có hình ảnh',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.9),
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -95,7 +151,7 @@ class MenuDetailScreen extends StatelessWidget {
                           child: Text(
                             item.name,
                             style: TextStyle(
-                              fontSize: 26,
+                              fontSize: 28,
                               fontWeight: FontWeight.bold,
                               color: Colors.grey.shade800,
                             ),
@@ -103,24 +159,29 @@ class MenuDetailScreen extends StatelessWidget {
                         ),
                         Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                            horizontal: 20,
+                            vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade600,
-                            borderRadius: BorderRadius.circular(20),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.blue.shade600,
+                                Colors.blue.shade400,
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.blue.shade200,
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
                               ),
                             ],
                           ),
                           child: Text(
                             '\$${item.price.toStringAsFixed(2)}',
                             style: TextStyle(
-                              fontSize: 22,
+                              fontSize: 24,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -128,14 +189,14 @@ class MenuDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 24),
                     Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: [
                         _buildInfoChip(
                           icon: item.isVegetarian ? Icons.eco : Icons.restaurant,
-                          label: item.isVegetarian ? 'Chay' : 'Mặn',
+                          label: item.isVegetarian ? 'Món Chay' : 'Món Mặn',
                           color: item.isVegetarian
                               ? Colors.green
                               : Colors.red,
@@ -144,7 +205,7 @@ class MenuDetailScreen extends StatelessWidget {
                           icon: item.isSpicy
                               ? Icons.local_fire_department
                               : Icons.ac_unit,
-                          label: item.isSpicy ? 'Cay' : 'Không cay',
+                          label: item.isSpicy ? 'Có Cay' : 'Không Cay',
                           color: item.isSpicy
                               ? Colors.orange
                               : Colors.blue,
@@ -156,92 +217,116 @@ class MenuDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 24),
-                    Divider(),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.description,
-                          color: Colors.blue.shade600,
-                          size: 24,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Mô tả món ăn',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 12),
+                    SizedBox(height: 32),
                     Container(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.grey.shade200,
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.blue.shade400,
+                            Colors.purple.shade400,
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Text(
-                        item.description.isNotEmpty
-                            ? item.description
-                            : 'Chưa có mô tả cho món ăn này.',
-                        style: TextStyle(
-                          fontSize: 16,
-                          height: 1.6,
-                          color: Colors.grey.shade700,
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    Card(
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildDetailRow(
-                              icon: Icons.attach_money,
-                              label: 'Giá',
-                              value: '\$${item.price.toStringAsFixed(2)}',
-                              color: Colors.green,
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.blue.shade400,
+                                        Colors.blue.shade600,
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(
+                                    Icons.description,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Text(
+                                  'Mô tả món ăn',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Divider(height: 24),
-                            _buildDetailRow(
-                              icon: Icons.timer_outlined,
-                              label: 'Thời gian chế biến',
-                              value: '${item.preparationTime} phút',
-                              color: Colors.orange,
-                            ),
-                            Divider(height: 24),
-                            _buildDetailRow(
-                              icon: Icons.restaurant_menu,
-                              label: 'Loại món',
-                              value: item.isVegetarian ? 'Món chay' : 'Món mặn',
-                              color: item.isVegetarian
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                            Divider(height: 24),
-                            _buildDetailRow(
-                              icon: Icons.local_fire_department,
-                              label: 'Độ cay',
-                              value: item.isSpicy ? 'Có cay' : 'Không cay',
-                              color: item.isSpicy
-                                  ? Colors.deepOrange
-                                  : Colors.blue,
+                            SizedBox(height: 16),
+                            Text(
+                              item.description.isNotEmpty
+                                  ? item.description
+                                  : 'Chưa có mô tả chi tiết cho món ăn này. Món ăn được chế biến từ những nguyên liệu tươi ngon nhất.',
+                              style: TextStyle(
+                                fontSize: 16,
+                                height: 1.8,
+                                color: Colors.grey.shade700,
+                              ),
                             ),
                           ],
                         ),
                       ),
+                    ),
+                    SizedBox(height: 24),
+                    Text(
+                      'Thông tin chi tiết',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade800,
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    _buildDetailCard(
+                      icon: Icons.attach_money,
+                      label: 'Giá món ăn',
+                      value: '\$${item.price.toStringAsFixed(2)}',
+                      color: Colors.green,
+                      gradient: [Colors.green.shade400, Colors.green.shade600],
+                    ),
+                    SizedBox(height: 12),
+                    _buildDetailCard(
+                      icon: Icons.timer_outlined,
+                      label: 'Thời gian chế biến',
+                      value: '${item.preparationTime} phút',
+                      color: Colors.orange,
+                      gradient: [Colors.orange.shade400, Colors.orange.shade600],
+                    ),
+                    SizedBox(height: 12),
+                    _buildDetailCard(
+                      icon: Icons.restaurant_menu,
+                      label: 'Phân loại',
+                      value: item.isVegetarian ? 'Món chay' : 'Món mặn',
+                      color: item.isVegetarian ? Colors.green : Colors.red,
+                      gradient: item.isVegetarian
+                          ? [Colors.green.shade400, Colors.green.shade600]
+                          : [Colors.red.shade400, Colors.red.shade600],
+                    ),
+                    SizedBox(height: 12),
+                    _buildDetailCard(
+                      icon: Icons.local_fire_department,
+                      label: 'Độ cay',
+                      value: item.isSpicy ? 'Có cay' : 'Không cay',
+                      color: item.isSpicy ? Colors.deepOrange : Colors.blue,
+                      gradient: item.isSpicy
+                          ? [Colors.deepOrange.shade400, Colors.deepOrange.shade600]
+                          : [Colors.blue.shade400, Colors.blue.shade600],
                     ),
                     SizedBox(height: 32),
                   ],
@@ -260,25 +345,37 @@ class MenuDetailScreen extends StatelessWidget {
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1.5,
+        gradient: LinearGradient(
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.2),
+          ],
         ),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(
+          color: color.withOpacity(0.4),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: color),
-          SizedBox(width: 6),
+          Icon(icon, size: 20, color: color),
+          SizedBox(width: 8),
           Text(
             label,
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
@@ -287,47 +384,63 @@ class MenuDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow({
+  Widget _buildDetailCard({
     required IconData icon,
     required String label,
     required String value,
     required Color color,
+    required List<Color> gradient,
   }) {
-    return Row(
-      children: [
-        Container(
-          padding: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 10,
+            offset: Offset(0, 4),
           ),
-          child: Icon(icon, color: color, size: 24),
-        ),
-        SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              SizedBox(height: 2),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-            ],
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: gradient),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-        ),
-      ],
+          SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
